@@ -1,6 +1,5 @@
 function checkRole(role) {
   return (req, res, next) => {
-
     const userRole = req.query.role;
 
     if (userRole === role) {

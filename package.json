@@ -1,15 +1,20 @@
 {
-  "name": "lab1-api",
+  "name": "event-organizer-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API REST pentru organizarea evenimentelor",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["events", "organization", "api"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
