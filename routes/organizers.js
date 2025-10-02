@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const uppercaseName = require("../middleware/uppercaseName");
 
 const organizers = [
   { id: 1, name: "Adrian Matei", role: "Organizer", description: "Organizator de evenimente tehnice" },
@@ -31,7 +32,6 @@ router.get("/details/:id", (req, res) => {
 
 router.get("/search", (req, res) => {
   let { name, minId, maxId } = req.query;
-
   let results = organizers;
 
   if (name) {
@@ -50,6 +50,30 @@ router.get("/search", (req, res) => {
   }
 
   res.json(results);
+});
+
+// endpoint special doar pentru nume
+router.get("/findByName/:name", (req, res) => {
+  const nameParam = req.params.name.toLowerCase();
+  const results = organizers.filter(o => o.name.toLowerCase().includes(nameParam));
+
+  if (results.length === 0) {
+    return res.status(404).json({ message: "Nu s-a găsit niciun organizator cu acest nume" });
+  }
+
+  res.json(results);
+});
+
+// endpoint POST cu pipe uppercaseName
+router.post("/add", uppercaseName, (req, res) => {
+  const { id, name, role, description } = req.body;
+
+  if (!id || !name || !role) {
+    return res.status(400).json({ message: "Datele sunt incomplete" });
+  }
+
+  organizers.push({ id, name, role, description });
+  res.json({ message: "Organizator adăugat cu succes", organizer: { id, name, role, description } });
 });
 
 module.exports = router;

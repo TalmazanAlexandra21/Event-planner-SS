@@ -29,9 +29,9 @@ router.get("/details/:id", (req, res) => {
   res.json(event);
 });
 
+// căutare după mai multe criterii
 router.get("/search", (req, res) => {
   let { name, minPrice, maxPrice } = req.query;
-
   let results = events;
 
   if (name) {
@@ -47,6 +47,18 @@ router.get("/search", (req, res) => {
   if (maxPrice) {
     const max = parseInt(maxPrice);
     results = results.filter(e => e.price <= max);
+  }
+
+  res.json(results);
+});
+
+// endpoint special doar pentru nume
+router.get("/findByName/:name", (req, res) => {
+  const nameParam = req.params.name.toLowerCase();
+  const results = events.filter(e => e.name.toLowerCase().includes(nameParam));
+
+  if (results.length === 0) {
+    return res.status(404).json({ message: "Nu s-a găsit niciun eveniment cu acest nume" });
   }
 
   res.json(results);

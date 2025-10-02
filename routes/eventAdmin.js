@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const checkRole = require("../middleware/eventAuth"); // Actualizat la noul nume al middleware-ului
+const checkRole = require("../middleware/eventAuth"); 
 
 const events = [
   { id: 1, name: "Concert Rock", date: "2025-10-01", location: "București", price: 100 },

@@ -2,10 +2,12 @@ const express = require("express");
 const app = express();
 const port = 4000;
 
-// Importăm rutele
-const usersRouter = require("./routes/organizers"); // Rute pentru gestionarea utilizatorilor
-const adminRouter = require("./routes/eventAdmin"); // Rute protejate pentru administratori
-const eventsRouter = require("./routes/events"); // Rute pentru gestionarea evenimentelor
+// pentru a putea citi body JSON
+app.use(express.json());
+
+const usersRouter = require("./routes/organizers"); 
+const adminRouter = require("./routes/eventAdmin");
+const eventsRouter = require("./routes/events"); 
 
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
