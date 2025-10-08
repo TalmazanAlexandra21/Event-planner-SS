@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const port = 4000;
 
-// pentru a putea citi body JSON
 app.use(express.json());
 
 const usersRouter = require("./routes/organizers"); 

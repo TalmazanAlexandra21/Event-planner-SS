@@ -1,67 +1,56 @@
 const express = require("express");
 const router = express.Router();
 
-const events = [
+let events = [
   { id: 1, name: "Concert Rock", date: "2025-10-01", location: "București", price: 100 },
   { id: 2, name: "Workshop IT", date: "2025-10-05", location: "Cluj", price: 50 },
   { id: 3, name: "Festival Film", date: "2025-10-10", location: "Iași", price: 80 },
-  { id: 4, name: "Conferință Business", date: "2025-10-15", location: "Timișoara", price: 120 },
-  { id: 5, name: "Expoziție Artă", date: "2025-10-20", location: "Brașov", price: 30 },
-  { id: 6, name: "Maraton Sportiv", date: "2025-10-25", location: "Constanța", price: 40 },
-  { id: 7, name: "Seminar Educațional", date: "2025-11-01", location: "Sibiu", price: 60 },
-  { id: 8, name: "Petrecere Tematică", date: "2025-11-05", location: "Ploiești", price: 70 },
-  { id: 9, name: "Târg de Carte", date: "2025-11-10", location: "Oradea", price: 20 },
-  { id: 10, name: "Eveniment Caritabil", date: "2025-11-15", location: "Arad", price: 0 },
 ];
 
+// ✅ GET - toate evenimentele
 router.get("/list", (req, res) => {
   res.json(events);
 });
 
+// ✅ GET - detalii după ID
 router.get("/details/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const event = events.find(e => e.id === id);
-
-  if (!event) {
-    return res.status(404).json({ message: "Evenimentul nu a fost găsit" });
-  }
-
+  const event = events.find(e => e.id === parseInt(req.params.id));
+  if (!event) return res.status(404).json({ message: "Evenimentul nu a fost găsit" });
   res.json(event);
 });
 
-// căutare după mai multe criterii
-router.get("/search", (req, res) => {
-  let { name, minPrice, maxPrice } = req.query;
-  let results = events;
+// ✅ POST - adaugă un eveniment nou
+router.post("/add", (req, res) => {
+  const { id, name, date, location, price } = req.body;
+  if (!id || !name || !date || !location)
+    return res.status(400).json({ message: "Date incomplete" });
 
-  if (name) {
-    const nameLower = name.toLowerCase();
-    results = results.filter(e => e.name.toLowerCase().includes(nameLower));
-  }
+  const exists = events.some(e => e.id === id);
+  if (exists) return res.status(409).json({ message: "ID-ul există deja" });
 
-  if (minPrice) {
-    const min = parseInt(minPrice);
-    results = results.filter(e => e.price >= min);
-  }
-
-  if (maxPrice) {
-    const max = parseInt(maxPrice);
-    results = results.filter(e => e.price <= max);
-  }
-
-  res.json(results);
+  const newEvent = { id, name, date, location, price: price || 0 };
+  events.push(newEvent);
+  res.status(201).json({ message: "Eveniment adăugat", event: newEvent });
 });
 
-// endpoint special doar pentru nume
-router.get("/findByName/:name", (req, res) => {
-  const nameParam = req.params.name.toLowerCase();
-  const results = events.filter(e => e.name.toLowerCase().includes(nameParam));
+// ✅ PUT - actualizează un eveniment
+router.put("/edit/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const event = events.find(e => e.id === id);
+  if (!event) return res.status(404).json({ message: "Evenimentul nu a fost găsit" });
 
-  if (results.length === 0) {
-    return res.status(404).json({ message: "Nu s-a găsit niciun eveniment cu acest nume" });
-  }
+  Object.assign(event, req.body);
+  res.json({ message: "Eveniment actualizat", event });
+});
 
-  res.json(results);
+// ✅ DELETE - șterge un eveniment
+router.delete("/delete/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = events.findIndex(e => e.id === id);
+  if (index === -1) return res.status(404).json({ message: "Evenimentul nu a fost găsit" });
+
+  const deleted = events.splice(index, 1);
+  res.json({ message: "Eveniment șters", deleted });
 });
 
 module.exports = router;
